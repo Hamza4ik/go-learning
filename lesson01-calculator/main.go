@@ -25,8 +25,10 @@ func calculate(a, b float64, op string) (float64, error) {
 			return 0, errors.New("Остаток от делении на ноль не определен")
 		}
 		return math.Mod(a, b), nil
+	case "^":
+		return math.Pow(a, b), nil
 	default:
-		return 0, fmt.Errorf("Ошибка: Неизвестная команда %q", op)
+		return 0, fmt.Errorf("Ошибка: Неизвестная команда: %q", op)
 	}
 }
 
@@ -39,24 +41,37 @@ func readNumber(prompt string) (float64, error) {
 	return strconv.ParseFloat(s, 64)
 }
 
+var last float64
+var hasLast bool
+
 func main() {
+
 	for {
-		fmt.Println("*===========Калкулятор===========*")
-		fmt.Println("Оператор (/ * - +) или q для выхода")
+
+		fmt.Println("*===========Калькулятор===========*")
+		fmt.Println("Оператор (/ * - + %, ^ , c) или q для выхода")
 		var op string
 		if _, err := fmt.Scan(&op); err != nil || op == "q" {
 			fmt.Println("Пока!")
 			return
 		}
+		if op == "c" {
+			if hasLast {
+				fmt.Println("Последный результат: ", last)
+			} else {
+				fmt.Println("Результатов пока нет")
+			}
+			continue
+		}
 
 		a, err := readNumber("Первое число: ")
 		if err != nil {
-			fmt.Println("Ошибка: нужно ввести число")
+			fmt.Println("нужно ввести число")
 			continue
 		}
 		b, err := readNumber("Второе число: ")
 		if err != nil {
-			fmt.Println("Ошибка: нужно ввести число")
+			fmt.Println("нужно ввести число!")
 			continue
 		}
 
@@ -65,6 +80,9 @@ func main() {
 			fmt.Println("Ошибка: ", err)
 			continue
 		}
-		fmt.Println("Результать: ", result)
+		last = result
+		hasLast = true
+
+		fmt.Println("Результат: ", result)
 	}
 }
